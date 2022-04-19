@@ -19,6 +19,7 @@ class NoteActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityNoteBinding
 
     private var purpose : String? = ""
+    private var noteId : Long = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,8 +31,17 @@ class NoteActivity : AppCompatActivity(), View.OnClickListener {
             getString(R.string.intent_purpose_key)
         )
 
-        if (purpose.isNullOrBlank()) {
-            finish()
+        if (purpose.equals(getString(R.string.intent_purpose_update_key))) {
+            noteId = intent.getLongExtra(getString(R.string.intent_key_note_id), -1)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val note = AppDatabase.getDatabase(applicationContext).noteDao().getNote(noteId)
+
+                withContext(Dispatchers.Main) {
+                    binding.etTitle.setText(note.title)
+                    binding.etNotes.setText(note.notes)
+                }
+            }
         }
 
         setTitle("${purpose} Note")
@@ -52,14 +62,14 @@ class NoteActivity : AppCompatActivity(), View.OnClickListener {
 
         CoroutineScope(Dispatchers.IO).launch {
             val noteDao = AppDatabase.getDatabase(applicationContext).noteDao()
-            val noteId : Long
             val lastModified = getLastModified()
 
             if (purpose.equals(getString(R.string.intent_purpose_add_key))) {
                 val note = Note(null, title, notes, lastModified)
                 noteId = noteDao.addNote(note)
             } else {
-                TODO("Need to implement update")
+                val note = Note(noteId, title, notes, lastModified)
+                noteDao.updateNote(note)
             }
 
             val intent = Intent()

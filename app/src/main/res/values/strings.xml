@@ -7,4 +7,5 @@
     <string name="label_notes">Notes</string>
     <string name="btn_save">Save</string>
     <string name="intent_key_note_id">note_id_key</string>
+    <string name="intent_purpose_update_key">Update</string>
 </resources>

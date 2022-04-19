@@ -1,6 +1,7 @@
 package com.example.winenotes
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -78,6 +79,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val startForUpdateResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        result : ActivityResult ->
+
+        if (result.resultCode == Activity.RESULT_OK) {
+            loadAllNotes()
+        }
+    }
+
     private fun addNewNote() {
         val intent = Intent(applicationContext, NoteActivity::class.java)
         intent.putExtra(
@@ -101,13 +110,42 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    inner class MainViewHolder(val view : TextView) : RecyclerView.ViewHolder(view), View.OnClickListener {
+    inner class MainViewHolder(val view : TextView) : RecyclerView.ViewHolder(view), View.OnClickListener, View.OnLongClickListener {
         init {
             view.setOnClickListener(this)
+            view.setOnLongClickListener(this)
         }
 
         override fun onClick(p0: View?) {
+            val intent = Intent(applicationContext, NoteActivity::class.java)
+            intent.putExtra(
+                getString(R.string.intent_purpose_key),
+                getString(R.string.intent_purpose_update_key)
+            )
 
+            val note = notes[adapterPosition]
+            intent.putExtra(
+                getString(R.string.intent_key_note_id),
+                note.id
+            )
+
+            startForUpdateResult.launch(intent)
+        }
+
+        override fun onLongClick(view: View?): Boolean {
+            val note = notes[adapterPosition]
+            val builder = AlertDialog.Builder(view!!.context)
+                .setTitle("Confirm Deletion")
+                .setMessage("Are you sure you want to delete this note?")
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(android.R.string.ok) { dialogInterface, whichButton ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        AppDatabase.getDatabase(applicationContext).noteDao().deleteNote(note)
+                        loadAllNotes()
+                    }
+                }
+            builder.show()
+            return true
         }
     }
 

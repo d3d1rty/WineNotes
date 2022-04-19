@@ -1,17 +1,21 @@
 package com.example.winenotes.database
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface NoteDao {
     @Insert
     fun addNote(note : Note) : Long
 
+    @Update
+    fun updateNote(note : Note)
+
     @Query("SELECT * FROM note")
     fun getAllNotes() : List<Note>
 
     @Query("SELECT * FROM note WHERE id = :noteId")
     fun getNote(noteId : Long) : Note
+
+    @Delete
+    fun deleteNote(note : Note)
 }
