@@ -13,6 +13,12 @@ interface NoteDao {
     @Query("SELECT * FROM note")
     fun getAllNotes() : List<Note>
 
+    @Query("SELECT * FROM note ORDER BY title")
+    fun getAllNotesByTitle() : List<Note>
+
+    @Query("SELECT * FROM note ORDER BY last_modified")
+    fun getAllNotesByLastModified() : List<Note>
+
     @Query("SELECT * FROM note WHERE id = :noteId")
     fun getNote(noteId : Long) : Note
 

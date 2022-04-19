@@ -53,6 +53,9 @@ class MainActivity : AppCompatActivity() {
         if (item.itemId == R.id.menu_item_add_note) {
             addNewNote()
             return true
+        } else if (item.itemId == R.id.menu_item_sort_by_title) {
+            sortByTitle()
+            return true
         }
         return super.onOptionsItemSelected(item)
     }
@@ -101,6 +104,20 @@ class MainActivity : AppCompatActivity() {
             val db = AppDatabase.getDatabase(applicationContext)
             val dao = db.noteDao()
             val results = dao.getAllNotes()
+
+            withContext(Dispatchers.Main) {
+                notes.clear()
+                notes.addAll(results)
+                adapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    private fun sortByTitle() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val db = AppDatabase.getDatabase(applicationContext)
+            val dao = db.noteDao()
+            val results = dao.getAllNotesByTitle()
 
             withContext(Dispatchers.Main) {
                 notes.clear()
