@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">WineNotes</string>
+    <string name="add_note">Add Note</string>
+    <string name="intent_purpose_key">purpose</string>
+    <string name="intent_purpose_add_key">Add</string>
+    <string name="label_title">Title</string>
+    <string name="label_notes">Notes</string>
+    <string name="btn_save">Save</string>
+    <string name="intent_key_note_id">note_id_key</string>
+</resources>
