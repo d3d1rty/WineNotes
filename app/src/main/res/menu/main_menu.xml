@@ -7,4 +7,7 @@
     <item
         android:id="@+id/menu_item_sort_by_title"
         android:title="@string/menu_item_sort_by_title" />
+    <item
+        android:id="@+id/menu_item_sort_by_last_modified"
+        android:title="@string/menu_item_sort_by_last_modified" />
 </menu>

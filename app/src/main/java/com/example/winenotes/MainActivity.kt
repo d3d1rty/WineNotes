@@ -56,6 +56,9 @@ class MainActivity : AppCompatActivity() {
         } else if (item.itemId == R.id.menu_item_sort_by_title) {
             sortByTitle()
             return true
+        } else if (item.itemId == R.id.menu_item_sort_by_last_modified) {
+            sortByLastModified()
+            return true
         }
         return super.onOptionsItemSelected(item)
     }
@@ -118,6 +121,20 @@ class MainActivity : AppCompatActivity() {
             val db = AppDatabase.getDatabase(applicationContext)
             val dao = db.noteDao()
             val results = dao.getAllNotesByTitle()
+
+            withContext(Dispatchers.Main) {
+                notes.clear()
+                notes.addAll(results)
+                adapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    private fun sortByLastModified() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val db = AppDatabase.getDatabase(applicationContext)
+            val dao = db.noteDao()
+            val results = dao.getAllNotesByLastModified()
 
             withContext(Dispatchers.Main) {
                 notes.clear()
